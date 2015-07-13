@@ -1,0 +1,41 @@
+{
+  "name": "peeracle-webrtc",
+  "version": "0.0.1",
+  "description": "WebRTC bindings used by Peeracle",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "install": "python gyp_webrtc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/peeracle/node-webrtc.git"
+  },
+  "keywords": [
+    "webrtc",
+    "p2p",
+    "datachannel",
+    "rtc",
+    "real",
+    "time",
+    "communications"
+  ],
+  "author": "Axel Isouard",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/peeracle/node-webrtc/issues"
+  },
+  "homepage": "https://github.com/peeracle/node-webrtc#readme",
+  "dependencies": {
+    "aws-sdk": "^2.1.38",
+    "node-gyp": "^2.0.1",
+    "node-pre-gyp": "^0.6.7"
+  },
+  "binary": {
+    "module_name": "peeracle-webrtc",
+    "module_path": "./build/{module_name}/v{version}/{configuration}/{node_abi}-{platform}-{arch}/",
+    "remote_path": "./{module_name}/v{version}/{configuration}/",
+    "package_name": "{node_abi}-{platform}-{arch}.tar.gz",
+    "host": "https://peeracle-webrtc.s3.amazonaws.com"
+  }
+}
