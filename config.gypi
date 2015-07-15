@@ -22,9 +22,9 @@
 {
   'variables': {
     'variables': {
-      'webrtc_root': '<(DEPTH)/webrtc/webrtc',
+      'webrtc_root': '<(DEPTH)/third_party/webrtc/webrtc',
       'peeracle_root': '<(DEPTH)',
-      'webrtc_depot_dir': '<(DEPTH)/webrtc',
+      'webrtc_depot_dir': '<(DEPTH)/third_party/webrtc',
     },
     'webrtc_root': '<(webrtc_root)',
     'peeracle_root': '<(peeracle_root)',
