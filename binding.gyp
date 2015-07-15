@@ -1,15 +1,15 @@
 {
   'includes': [
-    'webrtc/webrtc/build/common.gypi',
+    'third_party/webrtc/chromium/src/build/common.gypi',
   ],
   'targets': [
     {
       'target_name': 'peeracle-webrtc',
       'dependencies': [
-        'webrtc/talk/libjingle.gyp:libjingle_peerconnection',
+        'third_party/webrtc/talk/libjingle.gyp:libjingle_peerconnection',
       ],
       'include_dirs': [
-        'webrtc',
+        'third_party/webrtc',
       ],
       'sources': [
         'src/binding.cc',
