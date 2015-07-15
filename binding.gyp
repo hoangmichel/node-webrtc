@@ -22,18 +22,29 @@
 {
   'includes': [
     'third_party/webrtc/chromium/src/build/common.gypi',
+    'third_party/webrtc/webrtc/build/common.gypi'
   ],
   'targets': [
     {
-      'target_name': 'peeracle-webrtc',
+      'target_name': 'nwebrtc',
       'dependencies': [
-        'third_party/webrtc/talk/libjingle.gyp:libjingle_peerconnection',
+        'third_party/webrtc/talk/libjingle.gyp:libjingle_peerconnection'
       ],
       'include_dirs': [
-        'third_party/webrtc',
+        'third_party/webrtc'
       ],
       'sources': [
         'src/binding.cc',
+        'src/RTCDataChannel.cc',
+        'src/RTCIceCandidate.cc',
+        'src/RTCPeerConnection.cc',
+        'src/RTCSessionDescription.cc'
+      ],
+      'cflags': [
+        '-Wno-deprecated-declarations',
+      ],
+      'ldflags!': [
+        '-Wl,-z,defs'
       ]
     },
     {

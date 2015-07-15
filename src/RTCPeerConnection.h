@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 peeracle contributors
+ * Copyright (c) 2015 Axel Isouard <ax@eml.cc>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,19 +20,23 @@
  * SOFTWARE.
  */
 
+#ifndef NWEBRTC_RTCPEERCONNECTION_H_
+#define NWEBRTC_RTCPEERCONNECTION_H_
+
 #include <node.h>
-#include "../third_party/webrtc/webrtc/base/ssladapter.h"
-#include "RTCDataChannel.h"
-#include "RTCIceCandidate.h"
-#include "RTCPeerConnection.h"
-#include "RTCSessionDescription.h"
+#include <node_object_wrap.h>
 
-void Initialize(v8::Handle<v8::Object> exports) {
-  rtc::InitializeSSL();
-  RTCDataChannel::Init(exports);
-  RTCIceCandidate::Init(exports);
-  RTCPeerConnection::Init(exports);
-  RTCSessionDescription::Init(exports);
-}
+class RTCPeerConnection : public node::ObjectWrap {
+ public:
+  static void Init(v8::Handle<v8::Object> exports);
 
-NODE_MODULE(nwebrtc, Initialize)
+ private:
+  RTCPeerConnection();
+  ~RTCPeerConnection();
+
+  static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void toJSON(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static v8::Persistent<v8::Function> constructor;
+};
+
+#endif  // NWEBRTC_RTCPEERCONNECTION_H_
