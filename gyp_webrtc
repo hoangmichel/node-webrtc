@@ -49,6 +49,14 @@ from optparse import OptionParser
 if __name__ == '__main__':
   args = sys.argv[1:]
 
+  gitrc = Popen(['git', 'submodule', 'init']).wait()
+  if (gitrc):
+    sys.exit(gitrc)
+
+  gitrc = Popen(['git', 'submodule', 'update']).wait()
+  if (gitrc):
+    sys.exit(gitrc)
+  
   if int(os.environ.get('GYP_CHROMIUM_NO_ACTION', 0)):
     print 'Skipping gyp_webrtc due to GYP_CHROMIUM_NO_ACTION env var.'
     sys.exit(0)
