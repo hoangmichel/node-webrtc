@@ -33,7 +33,7 @@ RTCPeerConnection::~RTCPeerConnection() {
 }
 
 void RTCPeerConnection::Init(Handle<Object> exports) {
-  Isolate* isolate = Isolate::GetCurrent();
+  Isolate *isolate = Isolate::GetCurrent();
 
   // Prepare constructor template
   Local<FunctionTemplate> tpl = FunctionTemplate::New(isolate, New);
@@ -48,20 +48,19 @@ void RTCPeerConnection::Init(Handle<Object> exports) {
                tpl->GetFunction());
 }
 
-void RTCPeerConnection::New(const FunctionCallbackInfo<Value>& args) {
-  Isolate* isolate = Isolate::GetCurrent();
+void RTCPeerConnection::New(const FunctionCallbackInfo<Value> &info) {
+  Isolate *isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
 
-  if (args.IsConstructCall()) {
-    RTCPeerConnection* obj = new RTCPeerConnection();
-    obj->Wrap(args.This());
-    args.GetReturnValue().Set(args.This());
+  if (info.IsConstructCall()) {
+    RTCPeerConnection *obj = new RTCPeerConnection();
+    obj->Wrap(info.This());
+    info.GetReturnValue().Set(info.This());
   } else {
     Local<Function> cons = Local<Function>::New(isolate, constructor);
-    args.GetReturnValue().Set(cons->NewInstance());
+    info.GetReturnValue().Set(cons->NewInstance());
   }
 }
 
-void RTCPeerConnection::toJSON(const FunctionCallbackInfo<Value>& args)
-{
+void RTCPeerConnection::toJSON(const FunctionCallbackInfo<Value> &info) {
 }

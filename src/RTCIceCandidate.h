@@ -26,7 +26,8 @@
 #include <node.h>
 #include <node_object_wrap.h>
 
-class RTCIceCandidate : public node::ObjectWrap {
+class RTCIceCandidate
+  : public node::ObjectWrap {
  public:
   static void Init(v8::Handle<v8::Object> exports);
 
@@ -34,8 +35,9 @@ class RTCIceCandidate : public node::ObjectWrap {
   RTCIceCandidate();
   ~RTCIceCandidate();
 
-  static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
-  static void toJSON(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void New(const v8::FunctionCallbackInfo<v8::Value> &info);
+  static void toJSON(const v8::FunctionCallbackInfo<v8::Value> &info);
+
   static v8::Persistent<v8::Function> constructor;
 };
 

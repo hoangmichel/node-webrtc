@@ -29,29 +29,35 @@
 
 using namespace v8;
 
-class RTCSessionDescription : public node::ObjectWrap {
+class RTCSessionDescription
+  : public node::ObjectWrap {
  public:
   static void Init(Handle<Object> exports);
+
   webrtc::SessionDescriptionInterface *GetWrapped() const {
     return _sessionDescription;
   }
+
   void SetWrapped(webrtc::SessionDescriptionInterface *sessionDescription) {
     _sessionDescription = sessionDescription;
   }
 
  private:
-  RTCSessionDescription(const FunctionCallbackInfo<Value>&);
+  RTCSessionDescription(const FunctionCallbackInfo<Value> &);
+
   ~RTCSessionDescription();
 
-  static void New(const FunctionCallbackInfo<Value>& args);
-  static void toJSON(const FunctionCallbackInfo<Value>& args);
-
+  static void New(const FunctionCallbackInfo<Value> &info);
+  static void toJSON(const FunctionCallbackInfo<Value> &info);
   static void GetType(Local<String> property,
-                      const PropertyCallbackInfo<Value>& info);
+                      const PropertyCallbackInfo<Value> &info);
   static void GetSdp(Local<String> property,
-                     const PropertyCallbackInfo<Value>& info);
-  
+                     const PropertyCallbackInfo<Value> &info);
+
   static Persistent<Function> constructor;
+
+  static Local<String> kType;
+  static Local<String> kSdp;
 
   webrtc::SessionDescriptionInterface *_sessionDescription;
 };

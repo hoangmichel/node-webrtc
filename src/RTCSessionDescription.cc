@@ -20,6 +20,7 @@
  * SOFTWARE.
  */
 
+#include <sstream>
 #include "RTCSessionDescription.h"
 
 using namespace v8;
@@ -27,21 +28,26 @@ using namespace v8;
 Persistent<Function> RTCSessionDescription::constructor;
 
 RTCSessionDescription::RTCSessionDescription
-  (const FunctionCallbackInfo<Value>& args) : _sessionDescription(NULL) {
-  Isolate* isolate = args.GetIsolate();
+  (const FunctionCallbackInfo<Value> &info) : _sessionDescription(NULL) {
+  Isolate *isolate = info.GetIsolate();
 
-  if (args.Length() != 1 || !args[0]->IsObject()) {
-    isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "parameter 1 ('descriptionInitDict') is not an object.")));
+  if (info.Length() < 1 || !info[0]->IsObject()) {
+    Local<String> message = String::NewFromUtf8(
+      isolate, "argument must be an object");
+    isolate->ThrowException(
+      Exception::TypeError(message));
     return;
   }
 
-  Local<Object> object = args[0]->ToObject();
+  Local<Object> object = info[0]->ToObject();
 
   v8::Local<v8::Value> sdpValue;
   sdpValue = object->Get(String::NewFromUtf8(isolate, "sdp"));
 
   if (sdpValue.IsEmpty() || sdpValue->IsUndefined()) {
-    isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "sdp is invalid")));
+    Local<String> message = String::NewFromUtf8(
+      isolate, "'sdp' property must be set");
+    isolate->ThrowException(Exception::TypeError(message));
   }
 
   const std::string sdp = *String::Utf8Value(sdpValue->ToString());
@@ -50,20 +56,30 @@ RTCSessionDescription::RTCSessionDescription
   typeValue = object->Get(String::NewFromUtf8(isolate, "type"));
 
   if (typeValue.IsEmpty() || typeValue->IsUndefined()) {
-    isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "type is invalid")));
+    Local<String> message = String::NewFromUtf8(
+      isolate, "'type' property must be set");
+    isolate->ThrowException(Exception::TypeError(message));
   }
 
   const std::string type = *String::Utf8Value(typeValue->ToString());
 
   if (type != "offer" && type != "answer" && type != "pranswer") {
-    isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "type must be set to 'offer', 'answer' or 'pranswer'")));
+    Local<String> message = String::NewFromUtf8(
+      isolate, "'type' must be set to 'offer', 'answer' or 'pranswer'");
+    isolate->ThrowException(Exception::TypeError(message));
   }
 
   webrtc::SdpParseError error;
   _sessionDescription = webrtc::CreateSessionDescription(type, sdp, &error);
 
   if (!_sessionDescription) {
-    isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, error.description.c_str())));
+    std::stringstream strm;
+
+    strm << "Failed to parse sdp at line " << error.line << ": " <<
+    error.description;
+
+    isolate->ThrowException(Exception::TypeError(
+      String::NewFromUtf8(isolate, strm.str().c_str())));
   }
 }
 
@@ -74,73 +90,71 @@ RTCSessionDescription::~RTCSessionDescription() {
 }
 
 void RTCSessionDescription::Init(Handle<Object> exports) {
-  Isolate* isolate = Isolate::GetCurrent();
+  Isolate *isolate = Isolate::GetCurrent();
 
-  // Prepare constructor template
   Local<FunctionTemplate> tpl = FunctionTemplate::New(isolate, New);
   tpl->SetClassName(String::NewFromUtf8(isolate, "RTCSessionDescription"));
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
-  // Prototype
   NODE_SET_PROTOTYPE_METHOD(tpl, "toJSON", toJSON);
 
-  tpl->InstanceTemplate()->SetAccessor(String::NewFromUtf8(isolate, "type"),
-                                       GetType);
-  tpl->InstanceTemplate()->SetAccessor(String::NewFromUtf8(isolate, "sdp"),
-                                       GetSdp);
+  kType = String::NewFromUtf8(isolate, "type");
+  kSdp = String::NewFromUtf8(isolate, "sdp");
+
+  tpl->InstanceTemplate()->SetAccessor(kType, GetType);
+  tpl->InstanceTemplate()->SetAccessor(kSdp, GetSdp);
 
   constructor.Reset(isolate, tpl->GetFunction());
   exports->Set(String::NewFromUtf8(isolate, "RTCSessionDescription"),
                tpl->GetFunction());
 }
 
-void RTCSessionDescription::New(const FunctionCallbackInfo<Value>& args) {
-  Isolate* isolate = Isolate::GetCurrent();
+void RTCSessionDescription::New(const FunctionCallbackInfo<Value> &info) {
+  Isolate *isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
 
-  if (args.IsConstructCall()) {
-    RTCSessionDescription* obj = new RTCSessionDescription(args);
-    obj->Wrap(args.This());
-    args.GetReturnValue().Set(args.This());
+  if (info.IsConstructCall()) {
+    RTCSessionDescription *obj = new RTCSessionDescription(info);
+    obj->Wrap(info.This());
+    info.GetReturnValue().Set(info.This());
   } else {
     Local<Function> cons = Local<Function>::New(isolate, constructor);
-    args.GetReturnValue().Set(cons->NewInstance());
+    info.GetReturnValue().Set(cons->NewInstance());
   }
 }
 
 void RTCSessionDescription::GetType(Local<String> property,
-                                    const PropertyCallbackInfo<Value>& info) {
-  Isolate* isolate = info.GetIsolate();
-  RTCSessionDescription* w =
+                                    const PropertyCallbackInfo<Value> &info) {
+  Isolate *isolate = info.GetIsolate();
+  RTCSessionDescription *w =
     node::ObjectWrap::Unwrap<RTCSessionDescription>(info.This());
-  webrtc::SessionDescriptionInterface* s = w->GetWrapped();
+  webrtc::SessionDescriptionInterface *s = w->GetWrapped();
 
   info.GetReturnValue().Set(String::NewFromUtf8(isolate, s->type().c_str()));
 }
 
 void RTCSessionDescription::GetSdp(Local<String> property,
-                                   const PropertyCallbackInfo<Value>& info) {
-  Isolate* isolate = info.GetIsolate();
-  RTCSessionDescription* w =
+                                   const PropertyCallbackInfo<Value> &info) {
+  Isolate *isolate = info.GetIsolate();
+  RTCSessionDescription *w =
     node::ObjectWrap::Unwrap<RTCSessionDescription>(info.This());
-  webrtc::SessionDescriptionInterface* s = w->GetWrapped();
+  webrtc::SessionDescriptionInterface *s = w->GetWrapped();
   std::string sdp;
 
   s->ToString(&sdp);
   info.GetReturnValue().Set(String::NewFromUtf8(isolate, sdp.c_str()));
 }
 
-void RTCSessionDescription::toJSON(const FunctionCallbackInfo<Value>& args)
-{
-  Isolate* isolate = args.GetIsolate();
-  RTCSessionDescription* w =
-    node::ObjectWrap::Unwrap<RTCSessionDescription>(args.This());
-  webrtc::SessionDescriptionInterface* s = w->GetWrapped();
+void RTCSessionDescription::toJSON(const FunctionCallbackInfo<Value> &info) {
+  Isolate *isolate = info.GetIsolate();
+  RTCSessionDescription *w =
+    node::ObjectWrap::Unwrap<RTCSessionDescription>(info.This());
+  webrtc::SessionDescriptionInterface *s = w->GetWrapped();
   std::string sdp;
   Local<Object> object = Object::New(isolate);
 
   s->ToString(&sdp);
-  object->Set(String::NewFromUtf8(isolate, "type"), String::NewFromUtf8(isolate,  s->type().c_str()));
-  object->Set(String::NewFromUtf8(isolate, "sdp"), String::NewFromUtf8(isolate, sdp.c_str()));
-  args.GetReturnValue().Set(object);
+  object->Set(kType, String::NewFromUtf8(isolate, s->type().c_str()));
+  object->Set(kSdp, String::NewFromUtf8(isolate, sdp.c_str()));
+  info.GetReturnValue().Set(object);
 }

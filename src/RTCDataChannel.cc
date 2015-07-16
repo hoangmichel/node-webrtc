@@ -33,7 +33,7 @@ RTCDataChannel::~RTCDataChannel() {
 }
 
 void RTCDataChannel::Init(Handle<Object> exports) {
-  Isolate* isolate = Isolate::GetCurrent();
+  Isolate *isolate = Isolate::GetCurrent();
 
   // Prepare constructor template
   Local<FunctionTemplate> tpl = FunctionTemplate::New(isolate, New);
@@ -48,20 +48,19 @@ void RTCDataChannel::Init(Handle<Object> exports) {
                tpl->GetFunction());
 }
 
-void RTCDataChannel::New(const FunctionCallbackInfo<Value>& args) {
-  Isolate* isolate = Isolate::GetCurrent();
+void RTCDataChannel::New(const FunctionCallbackInfo<Value> &info) {
+  Isolate *isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
 
-  if (args.IsConstructCall()) {
-    RTCDataChannel* obj = new RTCDataChannel();
-    obj->Wrap(args.This());
-    args.GetReturnValue().Set(args.This());
+  if (info.IsConstructCall()) {
+    RTCDataChannel *obj = new RTCDataChannel();
+    obj->Wrap(info.This());
+    info.GetReturnValue().Set(info.This());
   } else {
     Local<Function> cons = Local<Function>::New(isolate, constructor);
-    args.GetReturnValue().Set(cons->NewInstance());
+    info.GetReturnValue().Set(cons->NewInstance());
   }
 }
 
-void RTCDataChannel::toJSON(const FunctionCallbackInfo<Value>& args)
-{
+void RTCDataChannel::toJSON(const FunctionCallbackInfo<Value> &info) {
 }

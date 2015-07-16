@@ -33,7 +33,7 @@ RTCIceCandidate::~RTCIceCandidate() {
 }
 
 void RTCIceCandidate::Init(Handle<Object> exports) {
-  Isolate* isolate = Isolate::GetCurrent();
+  Isolate *isolate = Isolate::GetCurrent();
 
   // Prepare constructor template
   Local<FunctionTemplate> tpl = FunctionTemplate::New(isolate, New);
@@ -48,20 +48,19 @@ void RTCIceCandidate::Init(Handle<Object> exports) {
                tpl->GetFunction());
 }
 
-void RTCIceCandidate::New(const FunctionCallbackInfo<Value>& args) {
-  Isolate* isolate = Isolate::GetCurrent();
+void RTCIceCandidate::New(const FunctionCallbackInfo<Value> &info) {
+  Isolate *isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
 
-  if (args.IsConstructCall()) {
-    RTCIceCandidate* obj = new RTCIceCandidate();
-    obj->Wrap(args.This());
-    args.GetReturnValue().Set(args.This());
+  if (info.IsConstructCall()) {
+    RTCIceCandidate *obj = new RTCIceCandidate();
+    obj->Wrap(info.This());
+    info.GetReturnValue().Set(info.This());
   } else {
     Local<Function> cons = Local<Function>::New(isolate, constructor);
-    args.GetReturnValue().Set(cons->NewInstance());
+    info.GetReturnValue().Set(cons->NewInstance());
   }
 }
 
-void RTCIceCandidate::toJSON(const FunctionCallbackInfo<Value>& args)
-{
+void RTCIceCandidate::toJSON(const FunctionCallbackInfo<Value> &info) {
 }
