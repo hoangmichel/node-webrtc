@@ -19,17 +19,19 @@ from subprocess import Popen
 
 script_dir = os.path.dirname(os.path.realpath(__file__))
 checkout_root = os.path.abspath(os.path.join(script_dir))
-webrtc_root = 'third_party/webrtc'
+webrtc_root = os.path.join(checkout_root, 'third_party', 'webrtc')
 
-sys.path.insert(0, os.path.join(checkout_root, webrtc_root, 'build'))
+sys.path.insert(0, os.path.join(checkout_root, 'third_party', 'depot_tools'))
+
+sys.path.insert(0, os.path.join(webrtc_root, 'build'))
 import gyp_chromium
 import gyp_helper
 import vs_toolchain
 
-sys.path.insert(0, os.path.join(checkout_root, webrtc_root, 'tools', 'gyp',
+sys.path.insert(0, os.path.join(webrtc_root, 'tools', 'gyp',
   'pylib'))
 
-sys.path.insert(0, os.path.join(checkout_root, webrtc_root, 'tools', 'clang',
+sys.path.insert(0, os.path.join(webrtc_root, 'tools', 'clang',
   'scripts'))
 
 import gyp
@@ -79,7 +81,7 @@ if __name__ == '__main__':
   args.append('./node_modules/node-pre-gyp/bin/node-pre-gyp')
   args.append('install')
   args.append('--build-from-source')
-  args.append('-d')
+  #args.append('-d')
   #args.append('--fallback-to-build')
   args.append('--')
 
@@ -125,6 +127,7 @@ if __name__ == '__main__':
 
   current_env = os.environ.copy()
   current_env['PYTHONPATH'] = ':'.join(sys.path)
+  current_env['PATH'] += ':'.join(sys.path)
 
   print repr(args)
   # Off we go...
