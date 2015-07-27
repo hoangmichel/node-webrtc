@@ -25,6 +25,9 @@
 
 using namespace v8;
 
+Local<String> RTCSessionDescription::kType;
+Local<String> RTCSessionDescription::kSdp;
+
 Persistent<Function> RTCSessionDescription::constructor;
 
 RTCSessionDescription::RTCSessionDescription
@@ -34,31 +37,26 @@ RTCSessionDescription::RTCSessionDescription
   if (info.Length() < 1 || !info[0]->IsObject()) {
     Local<String> message = String::NewFromUtf8(
       isolate, "argument must be an object");
-    isolate->ThrowException(
-      Exception::TypeError(message));
+    isolate->ThrowException(Exception::TypeError(message));
     return;
   }
 
-  Local<Object> object = info[0]->ToObject();
+  Handle<Object> object = Handle<Object>::Cast(info[0]);
 
-  v8::Local<v8::Value> sdpValue;
-  sdpValue = object->Get(String::NewFromUtf8(isolate, "sdp"));
-
-  if (sdpValue.IsEmpty() || sdpValue->IsUndefined()) {
-    Local<String> message = String::NewFromUtf8(
-      isolate, "'sdp' property must be set");
-    isolate->ThrowException(Exception::TypeError(message));
-  }
-
-  const std::string sdp = *String::Utf8Value(sdpValue->ToString());
-
-  v8::Local<v8::Value> typeValue;
-  typeValue = object->Get(String::NewFromUtf8(isolate, "type"));
-
-  if (typeValue.IsEmpty() || typeValue->IsUndefined()) {
+  if (!object->Has(kType)) {
     Local<String> message = String::NewFromUtf8(
       isolate, "'type' property must be set");
     isolate->ThrowException(Exception::TypeError(message));
+    return;
+  }
+
+  Local<Value> typeValue = object->Get(kType);
+
+  if (!typeValue->IsString()) {
+    Local<String> message = String::NewFromUtf8(
+      isolate, "'type' property must be a string");
+    isolate->ThrowException(Exception::TypeError(message));
+    return;
   }
 
   const std::string type = *String::Utf8Value(typeValue->ToString());
@@ -67,7 +65,26 @@ RTCSessionDescription::RTCSessionDescription
     Local<String> message = String::NewFromUtf8(
       isolate, "'type' must be set to 'offer', 'answer' or 'pranswer'");
     isolate->ThrowException(Exception::TypeError(message));
+    return;
   }
+
+  if (!object->Has(kSdp)) {
+    Local<String> message = String::NewFromUtf8(
+      isolate, "'sdp' property must be set");
+    isolate->ThrowException(Exception::TypeError(message));
+    return;
+  }
+
+  Local<Value> sdpValue = object->Get(kSdp);
+
+  if (!sdpValue->IsString()) {
+    Local<String> message = String::NewFromUtf8(
+      isolate, "'sdp' property must be a string");
+    isolate->ThrowException(Exception::TypeError(message));
+    return;
+  }
+
+  const std::string sdp = *String::Utf8Value(sdpValue->ToString());
 
   webrtc::SdpParseError error;
   _sessionDescription = webrtc::CreateSessionDescription(type, sdp, &error);
