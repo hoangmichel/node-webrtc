@@ -89,7 +89,7 @@ if __name__ == '__main__':
   args.append('./node_modules/node-pre-gyp/bin/node-pre-gyp')
   args.append('install')
   args.append('--build-from-source')
-  #args.append('-d')
+  args.append('-d')
   #args.append('--fallback-to-build')
   args.append('--')
 
