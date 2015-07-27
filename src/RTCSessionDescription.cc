@@ -25,14 +25,13 @@
 
 using namespace v8;
 
-Local<String> RTCSessionDescription::kType;
-Local<String> RTCSessionDescription::kSdp;
-
 Persistent<Function> RTCSessionDescription::constructor;
 
 RTCSessionDescription::RTCSessionDescription
   (const FunctionCallbackInfo<Value> &info) : _sessionDescription(NULL) {
   Isolate *isolate = info.GetIsolate();
+  Local<String> kType = String::NewFromUtf8(isolate, "type");
+  Local<String> kSdp = String::NewFromUtf8(isolate, "sdp");
 
   if (info.Length() < 1 || !info[0]->IsObject()) {
     Local<String> message = String::NewFromUtf8(
@@ -109,14 +108,14 @@ RTCSessionDescription::~RTCSessionDescription() {
 void RTCSessionDescription::Init(Handle<Object> exports) {
   Isolate *isolate = Isolate::GetCurrent();
 
+  Local<String> kType = String::NewFromUtf8(isolate, "type");
+  Local<String> kSdp = String::NewFromUtf8(isolate, "sdp");
+
   Local<FunctionTemplate> tpl = FunctionTemplate::New(isolate, New);
   tpl->SetClassName(String::NewFromUtf8(isolate, "RTCSessionDescription"));
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
   NODE_SET_PROTOTYPE_METHOD(tpl, "toJSON", toJSON);
-
-  kType = String::NewFromUtf8(isolate, "type");
-  kSdp = String::NewFromUtf8(isolate, "sdp");
 
   tpl->InstanceTemplate()->SetAccessor(kType, GetType);
   tpl->InstanceTemplate()->SetAccessor(kSdp, GetSdp);
@@ -164,6 +163,10 @@ void RTCSessionDescription::GetSdp(Local<String> property,
 
 void RTCSessionDescription::toJSON(const FunctionCallbackInfo<Value> &info) {
   Isolate *isolate = info.GetIsolate();
+
+  Local<String> kType = String::NewFromUtf8(isolate, "type");
+  Local<String> kSdp = String::NewFromUtf8(isolate, "sdp");
+
   RTCSessionDescription *w =
     node::ObjectWrap::Unwrap<RTCSessionDescription>(info.This());
   webrtc::SessionDescriptionInterface *s = w->GetWrapped();

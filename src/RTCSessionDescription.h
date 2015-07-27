@@ -56,9 +56,6 @@ class RTCSessionDescription
 
   static Persistent<Function> constructor;
 
-  static Local<String> kType;
-  static Local<String> kSdp;
-
   webrtc::SessionDescriptionInterface *_sessionDescription;
 };
 
