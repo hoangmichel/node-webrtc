@@ -23,9 +23,11 @@
   'variables': {
     'variables': {
       'webrtc_root': '<(DEPTH)/third_party/webrtc/webrtc',
+      'webrtc_depth': '<(DEPTH)/third_party/webrtc',
       'webrtc_depot_dir': '<(DEPTH)/third_party/webrtc',
     },
     'webrtc_root': '<(webrtc_root)',
+    'webrtc_depth': '<(webrtc_depth)',
     'webrtc_depot_dir': '<(webrtc_depot_dir)',
     'build_with_chromium': 0,
     'clang_use_chrome_plugins': 0,
