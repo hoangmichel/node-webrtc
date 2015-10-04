@@ -20,7 +20,9 @@
  * SOFTWARE.
  */
 
+#include <iostream>
 #include "RTCPeerConnection.h"
+
 
 using namespace v8;
 
@@ -30,6 +32,16 @@ RTCPeerConnection::RTCPeerConnection() {
 }
 
 RTCPeerConnection::~RTCPeerConnection() {
+}
+
+RTCPeerConnection::RTCPeerConnection(const FunctionCallbackInfo<Value> &info) {
+  Isolate *isolate = Isolate::GetCurrent();
+  if (info.Length() < 1 || !info[0]->IsObject() && !info[1]->IsObject()) {
+    Local<String> message = String::NewFromUtf8(
+      isolate, "argument must be an object");
+    isolate->ThrowException(Exception::TypeError(message));
+    return;
+  }
 }
 
 void RTCPeerConnection::Init(Handle<Object> exports) {
@@ -63,4 +75,24 @@ void RTCPeerConnection::New(const FunctionCallbackInfo<Value> &info) {
 }
 
 void RTCPeerConnection::toJSON(const FunctionCallbackInfo<Value> &info) {
+}
+
+void RTCPeerConnection::createOffer(const FunctionCallbackInfo<Value> &info) {
+  Isolate *isolate = Isolate::GetCurrent();
+  if (info.Length() < 1 || !info[0]->IsObject()) {
+    Local<String> message = String::NewFromUtf8(
+      isolate, "argument must be an object");
+    isolate->ThrowException(Exception::TypeError(message));
+    return;
+  }
+}
+
+void RTCPeerConnection::createAnswer(const FunctionCallbackInfo<Value> &info) {
+}
+
+void RTCPeerConnection::setLocalDescription(const FunctionCallbackInfo<Value> &info) {
+}
+
+
+void RTCPeerConnection::setRemoteDescription(const FunctionCallbackInfo<Value> &info) {
 }

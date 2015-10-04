@@ -33,10 +33,15 @@ class RTCPeerConnection
 
  private:
   RTCPeerConnection();
+  RTCPeerConnection(const v8::FunctionCallbackInfo<v8::Value> &info);
   ~RTCPeerConnection();
 
   static void New(const v8::FunctionCallbackInfo<v8::Value> &info);
   static void toJSON(const v8::FunctionCallbackInfo<v8::Value> &info);
+  static void createOffer(const v8::FunctionCallbackInfo<v8::Value> &info);
+  static void createAnswer(const v8::FunctionCallbackInfo<v8::Value> &info);
+  static void setLocalDescription(const v8::FunctionCallbackInfo<v8::Value> &info);
+  static void setRemoteDescription(const v8::FunctionCallbackInfo<v8::Value> &info);
 
   static v8::Persistent<v8::Function> constructor;
 };
