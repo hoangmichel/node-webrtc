@@ -20,6 +20,7 @@
  * SOFTWARE.
  */
 
+#include <node.h>
 #include <iostream>
 #include "RTCPeerConnection.h"
 
@@ -52,6 +53,11 @@ void RTCPeerConnection::Init(Handle<Object> exports) {
   tpl->SetClassName(String::NewFromUtf8(isolate, "RTCPeerConnection"));
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
+  tpl->PrototypeTemplate()->Set(String::NewFromUtf8(isolate, "createOffer"),
+                                FunctionTemplate::New(isolate, createOffer)->GetFunction());
+  tpl->PrototypeTemplate()->Set(String::NewFromUtf8(isolate, "createAnswer"),
+                                FunctionTemplate::New(isolate, createAnswer)->GetFunction());
+
   // Prototype
   NODE_SET_PROTOTYPE_METHOD(tpl, "toJSON", toJSON);
 
@@ -78,6 +84,7 @@ void RTCPeerConnection::toJSON(const FunctionCallbackInfo<Value> &info) {
 }
 
 void RTCPeerConnection::createOffer(const FunctionCallbackInfo<Value> &info) {
+  std::cout << "lol" << std::endl;
   Isolate *isolate = Isolate::GetCurrent();
   if (info.Length() < 1 || !info[0]->IsObject()) {
     Local<String> message = String::NewFromUtf8(
